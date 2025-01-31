@@ -11,58 +11,63 @@ const getModuleFederationConfigPath = (additionalPaths = []) => {
     "modulefederation.config.js",
     ...additionalPaths,
   ];
+
   return moduleFederationConfigFiles
     .map(resolveApp)
     .filter(fs.existsSync)
     .shift();
 };
 
-module.exports = {
-  overrideWebpackConfig: ({ webpackConfig, pluginOptions }) => {
-    const moduleFederationConfigPath = getModuleFederationConfigPath();
+module.exports = (params) => {
+	const { constructor: ModuleFederationPlugin } = params ?? {constructor: webpack.container.ModuleFederationPlugin};
 
-    if (moduleFederationConfigPath) {
-      webpackConfig.output.publicPath = "auto";
+	return ({
+		overrideWebpackConfig: ({ webpackConfig, pluginOptions }) => {
+			const moduleFederationConfigPath = getModuleFederationConfigPath();
 
-      if (pluginOptions?.useNamedChunkIds) {
-        webpackConfig.optimization.chunkIds = "named";
-      }
+			if (moduleFederationConfigPath) {
+				webpackConfig.output.publicPath = "auto";
 
-      const htmlWebpackPlugin = webpackConfig.plugins.find(
-        (plugin) => plugin.constructor.name === "HtmlWebpackPlugin"
-      );
+				if (pluginOptions?.useNamedChunkIds) {
+					webpackConfig.optimization.chunkIds = "named";
+				}
 
-      htmlWebpackPlugin.userOptions = {
-        ...htmlWebpackPlugin.userOptions,
-        publicPath: paths.publicUrlOrPath,
-        excludeChunks: [require(moduleFederationConfigPath).name],
-      };
+				const htmlWebpackPlugin = webpackConfig.plugins.find(
+					(plugin) => plugin.constructor.name === "HtmlWebpackPlugin"
+				);
 
-      webpackConfig.plugins = [
-        ...webpackConfig.plugins,
-        new webpack.container.ModuleFederationPlugin(
-          require(moduleFederationConfigPath)
-        ),
-      ];
+				htmlWebpackPlugin.userOptions = {
+					...htmlWebpackPlugin.userOptions,
+					publicPath: paths.publicUrlOrPath,
+					excludeChunks: [require(moduleFederationConfigPath).name],
+				};
 
-      // webpackConfig.module = {
-      //   ...webpackConfig.module,
-      //   generator: {
-      //     "asset/resource": {
-      //       publicPath: paths.publicUrlOrPath,
-      //     },
-      //   },
-      // };
-    }
-    return webpackConfig;
-  },
-  overrideDevServerConfig: ({ devServerConfig }) => {
-    devServerConfig.headers = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "*",
-      "Access-Control-Allow-Headers": "*",
-    };
+				webpackConfig.plugins = [
+					...webpackConfig.plugins,
+					new ModuleFederationPlugin(
+						require(moduleFederationConfigPath)
+					),
+				];
 
-    return devServerConfig;
-  },
+				// webpackConfig.module = {
+				//   ...webpackConfig.module,
+				//   generator: {
+				//     "asset/resource": {
+				//       publicPath: paths.publicUrlOrPath,
+				//     },
+				//   },
+				// };
+			}
+			return webpackConfig;
+		},
+		overrideDevServerConfig: ({ devServerConfig }) => {
+			devServerConfig.headers = {
+				"Access-Control-Allow-Origin": "*",
+				"Access-Control-Allow-Methods": "*",
+				"Access-Control-Allow-Headers": "*",
+			};
+
+			return devServerConfig;
+		},
+	});
 };
