@@ -1,32 +1,37 @@
 {
-  "name": "craco-module-federation",
-  "version": "1.1.0",
-  "description": "Add module federation support to your CRA5 application without ejecting",
+  "name": "craco-module-federation-parametrized",
+  "version": "1.0.0",
+  "description": "Enable Module Federation with parametrization for plugin instance on your CRA project without ejecting or losing update support of react-scripts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hasanayan/craco-module-federation.git"
+    "url": "git+https://github.com/Bargamut/craco-module-federation-parametrized.git"
   },
   "keywords": [
     "module-federation",
+    "module-federation-enhanced",
     "craco",
     "cra5",
     "cra",
     "create-react-app"
   ],
-  "author": "hasanayan",
+  "author": {
+    "name": "Paul \"Bargamut\" Petrov",
+    "email": "paul@bargamut.ru",
+    "url": "https://bargamut.ru"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hasanayan/craco-module-federation/issues"
+    "url": "https://github.com/Bargamut/craco-module-federation-parametrized/issues"
   },
-  "homepage": "https://github.com/hasanayan/craco-module-federation#readme",
+  "homepage": "https://github.com/Bargamut/craco-module-federation-parametrized#readme",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no automated test specified, only manual\" && exit 1"
   },
   "dependencies": {
-    "@craco/craco": "^6.3.0"
+    "@craco/craco": "^6.3.0 | ^7.0.0"
   }
 }
